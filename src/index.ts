@@ -85,23 +85,7 @@ export class Keycrypt {
   }
 
   encode (data: Buffer) {
-    return this.encrypt(data, this.keys[0], ALGORITHMS[this.algorithm])
-  }
-
-  decode (data: Buffer): Buffer | undefined {
-    const algorithm = data.readUInt8(0)
-
-    // Unknown algorithm input.
-    if (algorithm > ALGORITHMS.length) return undefined
-
-    // Iterate over each key and check.
-    for (const key of this.keys) {
-      const message = this.decrypt(data, key, ALGORITHMS[algorithm])
-      if (message) return message
-    }
-  }
-
-  private encrypt (data: Buffer, key: Key, algorithm: Algorithm) {
+    const key = this.keys[0]
     const { cipherAlgorithm, hmacAlgorithm, hmacDigestSize, ivSize } = ALGORITHMS[this.algorithm]
     const iv = randomBytes(ivSize)
     const cipher = createCipheriv(cipherAlgorithm, key.cipher, iv)
@@ -113,7 +97,21 @@ export class Keycrypt {
     return Buffer.concat([this.tag, mac, iv, ciphertext], totalLength)
   }
 
-  private decrypt (data: Buffer, key: Key, algorithm: Algorithm) {
+  decode (data: Buffer): Buffer | undefined {
+    const index = data.readUInt8(0)
+    const algorithm = ALGORITHMS[index]
+
+    // Unknown algorithm input.
+    if (!(index in ALGORITHMS)) return undefined
+
+    // Iterate over each key and check.
+    for (const key of this.keys) {
+      const message = this._decrypt(data, key, algorithm)
+      if (message) return message
+    }
+  }
+
+  private _decrypt (data: Buffer, key: Key, algorithm: Algorithm) {
     const {
       hmacAlgorithm,
       cipherAlgorithm,
