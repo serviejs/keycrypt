@@ -1,6 +1,6 @@
 {
   "name": "keycrypt",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Data encryption and decryption for rotating credentials and algorithms",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
