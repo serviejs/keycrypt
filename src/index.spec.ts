@@ -22,6 +22,12 @@ describe('keycrypt', () => {
     expect(result).toEqual(undefined)
   })
 
+  it('should fail to decode empty buffer', () => {
+    const result = keycrypt.decode(Buffer.alloc(0))
+
+    expect(result).toEqual(undefined)
+  })
+
   it('should verify the hmac is correct', () => {
     const encrypted = keycrypt.encode(Buffer.from('example', 'utf8'))
 

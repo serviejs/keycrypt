@@ -98,6 +98,8 @@ export class Keycrypt {
   }
 
   decode (data: Buffer): Buffer | undefined {
+    if (!data.length) return undefined
+
     const index = data.readUInt8(0)
     const algorithm = ALGORITHMS[index]
 
